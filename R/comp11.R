@@ -4,8 +4,7 @@ function(y){
   # Function that computes the distinct observations in a numeric vector.
   # It is based entirely on the "comp1" function from the BNPdensidty 
   # package with the exception that it returns the variable that 
-  # indicates that rearranges the numeric vector into one with its unique
-  # values only. 
+  # rearranges the numeric vector into one with its unique values only. 
   # 
   # IN:
   # 

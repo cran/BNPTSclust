@@ -9,7 +9,7 @@ This data set contains the average price of houses from the 1st quarter of 2004 
 }
 \usage{data(houses)}
 \format{
-Matrix with 44 rows and 33 columns. 
+Data frame with 44 rows and 33 columns. 
 }
 \source{
 http://www.ros.gov.uk/public/news/quarterly_statistics.html

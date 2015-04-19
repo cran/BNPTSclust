@@ -9,7 +9,7 @@ This data set contains the yearly GDP per person employed from 1990 to 2012 for 
 }
 \usage{data(gdp)}
 \format{
-Matrix with 20 rows and 121 columns. 
+Data frame with 20 rows and 121 columns. 
 }
 \source{
 http://data.worldbank.org/indicator/SL.GDP.PCAP.EM.KD

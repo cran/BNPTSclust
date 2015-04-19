@@ -1,8 +1,8 @@
 Package: BNPTSclust
 Type: Package
 Title: A Bayesian Nonparametric Algorithm for Time Series Clustering
-Version: 1.0
-Date: 2015-01-12
+Version: 1.1
+Date: 2015-04-19
 Author: Martell-Juarez, D.A. & Nieto-Barajas, L.E.
 Maintainer: David Alejandro Martell Juarez <alex91599@gmail.com>
 Depends: R(>= 3.1.2), mvtnorm, MASS
@@ -10,5 +10,5 @@ Description: Performs the algorithm for time series clustering described in Niet
 NeedsCompilation: no
 Repository: CRAN
 License: GPL (>= 2)
-Packaged: 2015-01-13 01:48:36 UTC; David M
-Date/Publication: 2015-01-13 19:40:14
+Packaged: 2015-04-19 17:58:38 UTC; David M
+Date/Publication: 2015-04-19 22:19:50

@@ -9,7 +9,7 @@ This data set contains the monthly adjusted closing prices of 58 shares of the m
 }
 \usage{data(stocks)}
 \format{
-A matrix with 60 rows and 58 columns. 
+Data frame with 60 rows and 58 columns. 
 }
 \source{
 http://www.dowjones.com/factiva/

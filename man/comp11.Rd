@@ -27,30 +27,6 @@ The code of the function is the same as the "comp1" function from the
 \author{
 Martell-Juarez, D.A., Barrios, E., Nieto-Barajas, L. and Pruenster, I.
 }
-\examples{
-## The function is currently defined as
-function (y) 
-{
-    n <- length(y)
-    mat <- outer(y, y, "==")
-    jstar <- led <- rep(FALSE, n)
-    for (j in seq(n)) {
-        if (!led[j]) {
-            jstar[j] <- TRUE
-            if (j == n) 
-                break
-            ji <- seq(j + 1, n)
-            tt <- mat[ji, j] \%in\% TRUE
-            led[ji] <- led[ji] | tt
-        }
-        if (all(led[-seq(j)])) 
-            break
-    }
-    ystar <- y[jstar]
-    nstar <- apply(as.matrix(mat[, jstar]), 2, sum)
-    rstar <- length(nstar)
-    gn <- match(y, ystar)
-    return(list(jstar = jstar, nstar = nstar, rstar = rstar, 
-        gn = gn))
-  }
+\note{
+For internal use.
 }

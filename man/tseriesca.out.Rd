@@ -9,7 +9,7 @@ This object contains the output of the function tseriesca for the example descri
 }
 \usage{data(tseriesca.out)}
 \details{
-See function tseriesca
+See function tseriesca for an explanation of how the output was obtained.
 }
 \examples{
 data(tseriesca.out)

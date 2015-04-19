@@ -9,7 +9,7 @@ This object contains the output of the function tseriescm for the example descri
 }
 \usage{data(tseriescm.out)}
 \details{
-See function tseriescm
+See function tseriescm for an explanation of how the output was obtained.
 }
 \examples{
 data(tseriescm.out)
