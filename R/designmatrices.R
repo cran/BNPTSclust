@@ -44,14 +44,14 @@ function(level,trend,seasonality,deg,T,n,fun){
       if(level == 0 & trend == 0){
         p <- 1+deg
         d <- 0
-        Z <- M
+        Z <- as.matrix(M)
         return(list(p=p,d=d,Z=Z))
       }
       
       if(level == 1 & trend == 0){
         p <- deg
         d <- 1
-        Z <- M[,(2:(deg+1))]
+        Z <- as.matrix(M[,(2:(deg+1))])
         X <- as.matrix(M[,1])
         return(list(p=p,d=d,Z=Z,X=X))
       }
@@ -60,14 +60,14 @@ function(level,trend,seasonality,deg,T,n,fun){
         p <- 1
         d <- deg
         Z <- as.matrix(M[,1])
-        X <- M[,(2:(deg+1))]
+        X <- as.matrix(M[,(2:(deg+1))])
         return(list(p=p,d=d,Z=Z,X=X))
       }
       
       if(level == 1 & trend == 1){
         p <- 0
         d <- 1+deg
-        X <- M
+        X <- as.matrix(M)
         return(list(p=p,d=d,X=X))
       }
       
@@ -104,30 +104,30 @@ function(level,trend,seasonality,deg,T,n,fun){
       if(level == 0 & trend == 0 & seasonality == 0){
         p <- 1+deg+11
         d <- 0
-        Z <- M
+        Z <- as.matrix(M)
         return(list(p=p,d=d,Z=Z))
       }
       
       if(level == 0 & trend == 0 & seasonality == 1){
         p <- 1+deg
         d <- 11
-        Z <- M[,(1:(deg+1))]
-        X <- M[,((deg+2):(1+deg+11))]
+        Z <- as.matrix(M[,(1:(deg+1))])
+        X <- as.matrix(M[,((deg+2):(1+deg+11))])
         return(list(p=p,d=d,Z=Z,X=X))        
       }
       
       if(level == 0 & trend == 1 & seasonality == 0){
         p <- 1+11
         d <- deg
-        Z <- cbind(M[,1],M[,(deg+2):(1+deg+11)])
-        X <- M[,(2:(deg+1))]
+        Z <- as.matrix(cbind(M[,1],M[,(deg+2):(1+deg+11)]))
+        X <- as.matrix(M[,(2:(deg+1))])
         return(list(p=p,d=d,Z=Z,X=X))
       }
       
       if(level == 1 & trend == 0 & seasonality == 0){
         p <- deg+11
         d <- 1
-        Z <- M[,(2:(1+deg+11))]
+        Z <- as.matrix(M[,(2:(1+deg+11))])
         X <- as.matrix(M[,1])
         return(list(p=p,d=d,Z=Z,X=X))        
       }
@@ -135,16 +135,16 @@ function(level,trend,seasonality,deg,T,n,fun){
       if(level == 1 & trend == 1 & seasonality == 0){
         p <- 11
         d <- 1+deg
-        Z <- M[,(deg+2):(1+deg+11)]
-        X <- M[,(1:(deg+1))]
+        Z <- as.matrix(M[,(deg+2):(1+deg+11)])
+        X <- as.matrix(M[,(1:(deg+1))])
         return(list(p=p,d=d,Z=Z,X=X))
       }
       
       if(level == 1 & trend == 0 & seasonality == 1){
         p <- deg
         d <- 1+11
-        Z <- M[,(2:(deg+1))]
-        X <- cbind(M[,1],M[,((deg+2):(1+deg+11))])
+        Z <- as.matrix(M[,(2:(deg+1))])
+        X <- as.matrix(cbind(M[,1],M[,((deg+2):(1+deg+11))]))
         return(list(p=p,d=d,Z=Z,X=X))
       }
       
@@ -152,14 +152,14 @@ function(level,trend,seasonality,deg,T,n,fun){
         p <- 1
         d <- deg+11
         Z <- as.matrix(M[,1])
-        X <- M[,(2:(1+deg+11))]
+        X <- as.matrix(M[,(2:(1+deg+11))])
         return(list(p=p,d=d,Z=Z,X=X))
       }
       
       if(level == 1 & trend == 1 & seasonality == 1){
         p <- 0
         d <- 1+deg+11
-        X <- M
+        X <- as.matrix(M)
         return(list(p=p,d=d,X=X))
       }
        
@@ -196,30 +196,30 @@ function(level,trend,seasonality,deg,T,n,fun){
       if(level == 0 & trend == 0 & seasonality == 0){
         p <- 1+deg+3
         d <- 0
-        Z <- M
+        Z <- as.matrix(M)
         return(list(p=p,d=d,Z=Z))
       }
       
       if(level == 0 & trend == 0 & seasonality == 1){
         p <- 1+deg
         d <- 3
-        Z <- M[,(1:(deg+1))]
-        X <- M[,((deg+2):(1+deg+3))]
+        Z <- as.matrix(M[,(1:(deg+1))])
+        X <- as.matrix(M[,((deg+2):(1+deg+3))])
         return(list(p=p,d=d,Z=Z,X=X))        
       }
       
       if(level == 0 & trend == 1 & seasonality == 0){
         p <- 1+3
         d <- deg
-        Z <- cbind(M[,1],M[,(deg+2):(1+deg+3)])
-        X <- M[,(2:(deg+1))]
+        Z <- as.matrix(cbind(M[,1],M[,(deg+2):(1+deg+3)]))
+        X <- as.matrix(M[,(2:(deg+1))])
         return(list(p=p,d=d,Z=Z,X=X))
       }
       
       if(level == 1 & trend == 0 & seasonality == 0){
         p <- deg+3
         d <- 1
-        Z <- M[,(2:(1+deg+3))]
+        Z <- as.matrix(M[,(2:(1+deg+3))])
         X <- as.matrix(M[,1])
         return(list(p=p,d=d,Z=Z,X=X))        
       }
@@ -227,16 +227,16 @@ function(level,trend,seasonality,deg,T,n,fun){
       if(level == 1 & trend == 1 & seasonality == 0){
         p <- 3
         d <- 1+deg
-        Z <- M[,(deg+2):(1+deg+3)]
-        X <- M[,(1:(deg+1))]
+        Z <- as.matrix(M[,(deg+2):(1+deg+3)])
+        X <- as.matrix(M[,(1:(deg+1))])
         return(list(p=p,d=d,Z=Z,X=X))
       }
       
       if(level == 1 & trend == 0 & seasonality == 1){
         p <- deg
         d <- 1+3
-        Z <- M[,(2:(deg+1))]
-        X <- cbind(M[,1],M[,((deg+2):(1+deg+3))])
+        Z <- as.matrix(M[,(2:(deg+1))])
+        X <- as.matrix(cbind(M[,1],M[,((deg+2):(1+deg+3))]))
         return(list(p=p,d=d,Z=Z,X=X))
       }
       
@@ -244,14 +244,14 @@ function(level,trend,seasonality,deg,T,n,fun){
         p <- 1
         d <- deg+3
         Z <- as.matrix(M[,1])
-        X <- M[,(2:(1+deg+3))]
+        X <- as.matrix(M[,(2:(1+deg+3))])
         return(list(p=p,d=d,Z=Z,X=X))
       }
       
       if(level == 1 & trend == 1 & seasonality == 1){
         p <- 0
         d <- 1+deg+3
-        X <- M
+        X <- as.matrix(M)
         return(list(p=p,d=d,X=X))
       }
       

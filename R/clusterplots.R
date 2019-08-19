@@ -13,10 +13,12 @@ function(L,data){
     # OUT:
     # 
     # Plots of the time series clusters. 
-    
-    data <- scaleandperiods(data)  
+  
+    scale <- L$scale
+    data <- scaleandperiods(data,scale)  
     mydata <- data$mydata              # Matrix with the scaled data.
     periods <- data$periods            # Array with the data periods.
+    
     
     T <- nrow(mydata)
     fT <- floor(T/3)
@@ -35,13 +37,12 @@ function(L,data){
       cc <- as.matrix(which(gnstar == j))
       cl <- rainbow(nrow(cc))
       
-      plot((1:T),mydata[,cc[1,1]],type = "l",main = paste("Group",j),xlab = "",xaxt = 'n',ylab = "Scaled variable in [0,1]",col = cl[1])
-      axis(1,at = auxtt,labels = periods[auxtt],las = 2,tck = 0)
-      
-      if(nrow(cc) > 1){
-        for(i in 2:nrow(cc)){
-          lines((1:T),mydata[,cc[i,1]],col = cl[i],lty=((i%%6)+1))
-        } 
+      if(scale==TRUE){
+        ts.plot(mydata[,cc],gpars=list(type = "l",main = paste("Group",j),xlab = "",xaxt = 'n',ylab = "Scaled variable in [0,1]",col = cl))
+        axis(1,at = auxtt,labels = periods[auxtt],las = 2,tck = 0)
+      }else{
+        ts.plot(mydata[,cc],gpars=list(type = "l",main = paste("Group",j),xlab = "",xaxt = 'n',ylab = "Clustering variable",col = cl))
+        axis(1,at = auxtt,labels = periods[auxtt],las = 2,tck = 0)
       }
       
     }

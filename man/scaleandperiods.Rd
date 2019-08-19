@@ -7,10 +7,15 @@ Scaling data function.
 This function scales the time series data in the interval [0,1] as deemed necessary in Nieto-Barajas and Contreras-Cristan (2014) for the time series clustering algorithm. It also obtains the time periods of the data set provided. 
 }
 \usage{
-scaleandperiods(data)
+scaleandperiods(data,scale)
 }
 \arguments{
-  \item{data}{Data frame with the time series information.}
+  \item{data}{
+Data frame with the time series information.
+}
+  \item{scale}{
+Flag that indicates if the time series data should be scaled to the [0,1] interval with a linear transformation as proposed by Nieto-Barajas and Contreras-Cristan (2014). If TRUE, then the time series are scaled to the [0,1] interval. Its value comes directly from the "scale" argument of the clustering functions. 
+}
 }
 \details{
 The function considers that the time periods of the data appear as row

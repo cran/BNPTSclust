@@ -2,7 +2,9 @@
 \alias{BNPTSclust-package}
 \alias{BNPTSclust}
 \docType{package}
-\title{A Bayesian Nonparametric Algorithm for Time Series Clustering}
+\title{
+A Bayesian Nonparametric Algorithm for Time Series Clustering
+}
 \description{
 This package performs the algorithm for time series clustering described
 in Nieto-Barajas and Contreras-Cristan (2014). The package contains 
@@ -20,8 +22,8 @@ The main functions to accomplish the above are:
 \tabular{ll}{
 Package: \tab BNPTSclust\cr
 Type: \tab Package\cr
-Version: \tab 1.1\cr
-Date: \tab 2015-04-19\cr
+Version: \tab 2.0\cr
+Date: \tab 2019-08-19\cr
 License: \tab GPL2, GPL3\cr
 }
 For a comprehensive guide on how to use the package, refer to the vignette
@@ -36,5 +38,5 @@ Maintainer: David Alejandro Martell Juarez <alex91599@gmail.com>
 \references{
 Nieto-Barajas, L.E. and Contreras-Cristan, A. (2014) A Bayesian Nonparametric Approach for Time Series Clustering. \emph{Bayesian Analysis} \bold{Vol. 9, No. 1} 147--170.
 }
-
 \keyword{ package }
+

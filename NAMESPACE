@@ -1,3 +1,6 @@
 exportPattern("^[[:alpha:]]+")
 importFrom(mvtnorm,dmvnorm)
 importFrom(MASS,mvrnorm)
+importFrom("grDevices", "rainbow")
+importFrom("graphics", "axis", "hist", "par", "plot")
+importFrom("stats", "dbeta", "dgamma", "rgamma", "runif", "ts.plot")

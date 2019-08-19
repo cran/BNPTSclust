@@ -1,8 +1,8 @@
 tseriesca <-
-function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
+function(data,maxiter=500,burnin=floor(0.1*maxiter),thinning=5,scale=TRUE,
            level=FALSE,trend=TRUE,deg=2,c0eps=2,c1eps=1,c0beta=2,
-           c1beta=1,c0alpha=2,c1alpha=1,priora=FALSE,pia=0.5,q0a=1,
-           q1a=1,priorb=FALSE,q0b=1,q1b=1,a=0.25,b=0,indlpml=FALSE){
+           c1beta=1,c0alpha=2,c1alpha=1,priora=TRUE,pia=0.5,q0a=1,
+           q1a=1,priorb=TRUE,q0b=1,q1b=1,a=0.25,b=0,indlpml=FALSE){
   
   # Function that performs the time series clustering algorithm
   # described in Nieto-Barajas and Contreras-Cristan (2014) "A Bayesian
@@ -19,12 +19,16 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
   #            sampling. 
   # thinning <- Number that indicates how many Gibbs sampling simulations
   #             should be skipped to form the Markov Chain.
-    # level   <- Flag that indicates if the level of the time 
-    #            series will be considered for clustering. If TRUE, then it 
-    #            is taken into account.
-    # trend   <- Flag that indicates if the polinomial trend of 
-    #            the model will be considered for clustering. 
-    #            If TRUE, then it is taken into account. 
+  # scale   <- Flag that indicates if the time series data should be scaled to the
+  #            [0,1] interval with a linear transformation as proposed by 
+  #            Nieto-Barajas and Contreras-Cristan (2014). If TRUE, then the time
+  #            series are scaled to the [0,1] interval. 
+  # level   <- Flag that indicates if the level of the time 
+  #            series will be considered for clustering. If TRUE, then it 
+  #            is taken into account.
+  # trend   <- Flag that indicates if the polinomial trend of 
+  #            the model will be considered for clustering. 
+  #            If TRUE, then it is taken into account. 
   # deg     <- Degree of the polinomial trend of the model. 
   #            Default value = 2. 
   # c0eps   <- Shape parameter of the hyper-prior distribution 
@@ -39,18 +43,18 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
   #            on sig2alpha. Default value = 2.
   # c1alpha <- Rate parameter of the hyper-prior distribution 
   #            on sig2alpha. Default value = 1.
-    # priora  <- Flag that indicates if a prior on parameter "a" is
-    #            to be assigned. If TRUE, a prior on "a" is assigned.
-    #            Default value = FALSE.
+  # priora  <- Flag that indicates if a prior on parameter "a" is
+  #            to be assigned. If TRUE, a prior on "a" is assigned.
+  #            Default value = FALSE.
   # pia     <- Mixing proportion of the prior distribution on parameter 
   #            "a". Default value = 0.5.
   # q0a     <- Shape parameter of the continuous part of the prior
   #            distribution on parameter "a". Default value = 1.
   # q1a     <- Shape parameter of the continuous part of the prior
   #            distribution on parameter "a". Default value = 1.
-    # priorb  <- Flag that indicates if a prior on parameter "b" is
-    #            to be assigned. If TRUE, a prior on "b" is assigned.
-    #            Default value = FALSE.
+  # priorb  <- Flag that indicates if a prior on parameter "b" is
+  #            to be assigned. If TRUE, a prior on "b" is assigned.
+  #            Default value = FALSE.
   # q0b     <- Shape parameter of the prior distribution on parameter 
   #            "b". Default value = 1.
   # q1b     <- Shape parameter of the prior distribution on parameter 
@@ -59,8 +63,8 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
   #            Default value = 0.25.
   # b       <- Initial/fixed value of parameter "b". 
   #            Default value = 0.
-    # indlpml <- Flag that indicates if the LPML is to be calculated.
-    #            If TRUE, LPML is calculated. Default value = FALSE.
+  # indlpml <- Flag that indicates if the LPML is to be calculated.
+  #            If TRUE, LPML is calculated. Default value = FALSE.
   # 
   # OUT:
   #
@@ -81,6 +85,9 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
   # msample <- Vector that contains the sample of the number of groups at each Gibbs sampling iteration.
   # lpml    <- If indlpml = 1, lpml contains the value of the LPML of the
   #            chosen model.
+  # scale   <- Flag that indicates if the time series data were scaled to the
+  #            [0,1] interval with a linear transformation. This will be taken as an input for the 
+  #            plotting functions.
     
     if(level == TRUE){
       level <- 1
@@ -160,7 +167,7 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
   }
   
   
-  data <- scaleandperiods(data)  
+  data <- scaleandperiods(data,scale)  
   mydata <- as.matrix(data$mydata)   # Matrix with the scaled data.
   periods <- data$periods            # Array with the data periods.
   cts <- data$cts                    # Variable that indicates if any time series
@@ -280,7 +287,6 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
           Qinv <- chol2inv(chol(Q))
           Winv <- Qinv 
           W <- Q
-          
           Valphainv <- (t(Z) %*% Winv %*% Z) + invsigmaalpha
           Valpha <- chol2inv(chol(Valphainv))
           
@@ -298,7 +304,6 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
           
           Winv <- Qinv + (Qinv %*% X %*% V %*% t(X) %*% Qinv)
           W <- chol2inv(chol(Winv))
-          
           Valphainv <- (t(Z) %*% Winv %*% Z) + invsigmaalpha
           Valpha <- chol2inv(chol(Valphainv))
           
@@ -306,7 +311,7 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
           
           alpha[,i] <- mvrnorm(1,mualpha,Valpha)
         }
-      } 
+      }
     }
     
     
@@ -365,9 +370,9 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
         
         den <- d0 + sum(dj)
         if(den == 0){
-          d0 <- (b + a*mi) + dmvnorm(mydata[,i],(Z %*% alpha[,i]),W,log=TRUE)
+          d0 <- log(b + a*mi) + dmvnorm(mydata[,i],(Z %*% alpha[,i]),W,log=TRUE)
           for(j in 1:mi){
-            dj[j] <- (nstar[j] - a) + dmvnorm(mydata[,i],(Z %*% alpha[,i] + thetastar[,j]),sigmaeps,log=TRUE)          
+            dj[j] <- log(nstar[j] - a) + dmvnorm(mydata[,i],(Z %*% alpha[,i] + thetastar[,j]),sigmaeps,log=TRUE)          
           }
           dj <- rbind(dj,d0)
           aa <- min(dj)
@@ -388,9 +393,9 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
         
         den <- d0 + sum(dj)
         if(den == 0){
-          d0 <- (b + a*mi) + dmvnorm(mydata[,i],matrix(0,T,1),W,log=TRUE)
+          d0 <- log(b + a*mi) + dmvnorm(mydata[,i],matrix(0,T,1),W,log=TRUE)
           for(j in 1:mi){
-            dj[j] <- (nstar[j] - a) + dmvnorm(mydata[,i],(X %*% betastar[,j] + thetastar[,j]),sigmaeps,log=TRUE)          
+            dj[j] <- log(nstar[j] - a) + dmvnorm(mydata[,i],(X %*% betastar[,j] + thetastar[,j]),sigmaeps,log=TRUE)          
           }
           dj <- rbind(dj,d0)
           aa <- min(dj)
@@ -411,9 +416,9 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
         
         den <- d0 + sum(dj)
         if(den == 0){
-          d0 <- (b + a*mi) + dmvnorm(mydata[,i],(Z %*% alpha[,i]),W,log=TRUE)
+          d0 <- log(b + a*mi) + dmvnorm(mydata[,i],(Z %*% alpha[,i]),W,log=TRUE)
           for(j in 1:mi){
-            dj[j] <- (nstar[j] - a) + dmvnorm(mydata[,i],(Z %*% alpha[,i] + X %*% betastar[,j] + thetastar[,j]),sigmaeps,log=TRUE)          
+            dj[j] <- log(nstar[j] - a) + dmvnorm(mydata[,i],(Z %*% alpha[,i] + X %*% betastar[,j] + thetastar[,j]),sigmaeps,log=TRUE)          
           }
           dj <- rbind(dj,d0)
           aa <- min(dj)
@@ -496,7 +501,7 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
         
         for(i in 1:nstar[j]){
           aux <- aux + diag((1/sig2eps[cc[i]]),T)
-          aux1 <- aux1 + (diag((1/sig2eps[cc[i]]),T) %*% (mydata[,i] - Z %*% alpha[,i]))          
+          aux1 <- aux1 + (diag((1/sig2eps[cc[i]]),T) %*% (mydata[,cc[i]] - Z %*% alpha[,cc[i]]))          
         }
         
         Sthetastar <- chol2inv(chol(aux + chol2inv(chol(R))))
@@ -511,8 +516,8 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
         
         for(i in 1:nstar[j]){
           aux <- aux + diag((1/sig2eps[cc[i]]),T)
-          aux1 <- aux1 + (diag((1/sig2eps[cc[i]]),T) %*% (mydata[,i] - X %*% betastar[,j]))
-          aux2 <- aux2 + (diag((1/sig2eps[cc[i]]),T) %*% (mydata[,i] - thetastar[,j]))    
+          aux1 <- aux1 + (diag((1/sig2eps[cc[i]]),T) %*% (mydata[,cc[i]] - X %*% betastar[,j]))
+          aux2 <- aux2 + (diag((1/sig2eps[cc[i]]),T) %*% (mydata[,cc[i]] - thetastar[,j]))    
         }
         
         Sthetastar <- chol2inv(chol(aux + chol2inv(chol(R))))
@@ -530,8 +535,8 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
         
         for(i in 1:nstar[j]){
           aux <- aux + diag((1/sig2eps[cc[i]]),T)
-          aux1 <- aux1 + (diag((1/sig2eps[cc[i]]),T) %*% (mydata[,i] - Z %*% alpha[,i] - X %*% betastar[,j]))
-          aux2 <- aux2 + (diag((1/sig2eps[cc[i]]),T) %*% (mydata[,i] - Z %*% alpha[,i] - thetastar[,j]))    
+          aux1 <- aux1 + (diag((1/sig2eps[cc[i]]),T) %*% (mydata[,cc[i]] - Z %*% alpha[,cc[i]] - X %*% betastar[,j]))
+          aux2 <- aux2 + (diag((1/sig2eps[cc[i]]),T) %*% (mydata[,cc[i]] - Z %*% alpha[,cc[i]] - thetastar[,j]))    
         }
         
         Sthetastar <- chol2inv(chol(aux + chol2inv(chol(R))))
@@ -588,39 +593,6 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
     }
     
     
-    ##### 3) SIMULATION OF SIG2EPS' POSTERIOR DISTRIBUTION #####
-    
-    if((level+trend) == 0){
-      M <- t(mydata - Z%*%alpha - theta) %*% (mydata - Z%*%alpha - theta)
-    }else if((level+trend) == 2){
-      M <- t(mydata - X%*%beta - theta) %*% (mydata - X%*%beta - theta)
-    }else{
-      M <- t(mydata - Z%*%alpha - X%*%beta - theta) %*% (mydata - Z%*%alpha - X%*%beta - theta)
-    }
-    
-    sig2eps <- 1/rgamma(n,(c0eps + T/2),(c1eps + diag(M)/2))
-    
-    
-    ##### 4) SIMULATION OF SIMGAALPHA'S POSTERIOR DISTRIBUTION #####
-    
-    if((level+trend) != 2){
-      sig2alpha <- 1/rgamma(p,(c0alpha + n/2),(c1alpha + rowSums(alpha^2)))
-      
-      sigmaalpha <- diag(c(sig2alpha),p,p)
-      invsigmaalpha <- diag(1/c(sig2alpha),p,p) 
-    }
-    
-    
-    ##### 5) SIMULATION OF SIGMABETA'S POSTERIOR DISTRIBUTION #####
-    
-    if((level+trend) != 0){
-      sig2beta <- 1/rgamma(d,(c0beta + m/2),(c1beta + colSums(betastar^2)/2))
-      
-      sigmabeta <- diag(c(sig2beta),d,d)
-      invsigmabeta <- diag(1/c(sig2beta),d,d) 
-    }
-    
-    
     ##### 6) SIMULATION OF SIG2THE'S POSTERIOR DISTRIBUTION #####
     
     cholP <- chol(P)              # Calculation of the Cholesky factorization of P.
@@ -654,11 +626,11 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
     
     # Calculating the sum necessary for the computation of the acceptance probability.
     for(j in 1:m){
-      s <- s + t(as.matrix(thetastar[,j])) %*% (Pmhinv-Pmh) %*% as.matrix(thetastar[,j])
+      s <- s + t(as.matrix(thetastar[,j])) %*% (Pmhinv-Pinv) %*% as.matrix(thetastar[,j])
     }
     
     # Computation of the acceptance probability.
-    q <- (-m)*(log(prod(diag(cholPmh)))- log(prod(diag(cholP)))) - ((1/(2*sig2the))*s) + (1/2)*(log(1 + rhomh*rhomh) - log(1 + rho*rho)) - log(1 - rhomh*rhomh) + log(1 - rho*rho) 
+    q <- (-m/2)*(log(prod(diag(cholPmh)))- log(prod(diag(cholP)))) - ((1/(2*sig2the))*s) + (1/2)*(log(1 + rhomh*rhomh) - log(1 + rho*rho)) - log(1 - rhomh*rhomh) + log(1 - rho*rho) 
     
     # Definition of the acceptance probability. 
     quot <- min(0,q)
@@ -682,6 +654,39 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
     R <- sig2the*P  
     
     
+    ##### 3) SIMULATION OF SIG2EPS' POSTERIOR DISTRIBUTION #####
+    
+    if((level+trend) == 0){
+      M <- t(mydata - Z%*%alpha - theta) %*% (mydata - Z%*%alpha - theta)
+    }else if((level+trend) == 2){
+      M <- t(mydata - X%*%beta - theta) %*% (mydata - X%*%beta - theta)
+    }else{
+      M <- t(mydata - Z%*%alpha - X%*%beta - theta) %*% (mydata - Z%*%alpha - X%*%beta - theta)
+    }
+    
+    sig2eps <- 1/rgamma(n,(c0eps + T/2),(c1eps + diag(M)/2))
+    
+    
+    ##### 4) SIMULATION OF SIMGAALPHA'S POSTERIOR DISTRIBUTION #####
+    
+    if((level+trend) != 2){
+      sig2alpha <- 1/rgamma(p,(c0alpha + n/2),(c1alpha + rowSums(alpha^2)))
+      
+      sigmaalpha <- diag(c(sig2alpha),p,p)
+      invsigmaalpha <- diag(1/c(sig2alpha),p,p) 
+    }
+    
+    
+    ##### 5) SIMULATION OF SIGMABETA'S POSTERIOR DISTRIBUTION #####
+    
+    if((level+trend) != 0){
+      sig2beta <- 1/rgamma(d,(c0beta + m/2),(c1beta + colSums(betastar^2)/2))
+      
+      sigmabeta <- diag(c(sig2beta),d,d)
+      invsigmabeta <- diag(1/c(sig2beta),d,d) 
+    }
+    
+    
     ##### 8) SIMULATION OF A'S POSTERIOR DISTRIBUTION (METROPOLIS-HASTINGS WITH UNIFORM PROPOSALS) #####
     
     if(priora == 1){
@@ -700,7 +705,6 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
       # If b is not greater than -a, then accept the proposal directly.
       if ((a+b) <= 0){
         a <- amh
-        print("a+b < 0")
       } else{
         
         quot1 <- 0
@@ -754,7 +758,6 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
       # If b is not greater than -a, then accept the proposal directly.
       if ((a+b) <= 0){
         b <- bmh  
-        print("a+b < 0")
       } else{
         
         quot2 <- 0
@@ -913,9 +916,10 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
   }
   
   
+  names <- colnames(mydata)
   cat("Number of groups of the chosen cluster configuration: ",mstar,"\n")
   for(i in 1:mstar){
-    cat("Time series in group",i,":",which(gnstar == i),"\n")
+    cat("Time series in group",i,":",names[which(gnstar == i)],"\n")
   }
   cat("HM Measure: ",HM,"\n")
   
@@ -928,19 +932,37 @@ function(data,maxiter=1000,burnin=floor(0.1*maxiter),thinning=5,
   
   if(indlpml !=0){
     if((level+trend) == 0){
-      return(list(mstar = mstar,gnstar = gnstar,HM = HM,arrho = arrho,ara = ara,arb = arb,lpml = lpml,sig2epssample = sig2epssample,sig2alphasample = sig2alphasample,sig2thesample = sig2thesample,rhosample = rhosample,asample = asample,bsample = bsample,msample = msample,periods = periods))  
+      return(list(mstar = mstar,gnstar = gnstar,HM = HM,arrho = arrho,ara = ara,arb = arb,lpml = lpml,
+                  sig2epssample = sig2epssample,sig2alphasample = sig2alphasample,
+                  sig2thesample = sig2thesample,rhosample = rhosample,asample = asample,
+                  bsample = bsample,msample = msample,periods = periods,scale=scale))  
     }else if((level+trend) == 2){
-      return(list(mstar = mstar,gnstar = gnstar,HM = HM,arrho = arrho,ara = ara,arb = arb,lpml = lpml,sig2epssample = sig2epssample,sig2betasample = sig2betasample,sig2thesample = sig2thesample,rhosample = rhosample,asample = asample,bsample = bsample,msample = msample,periods = periods))
+      return(list(mstar = mstar,gnstar = gnstar,HM = HM,arrho = arrho,ara = ara,arb = arb,lpml = lpml,
+                  sig2epssample = sig2epssample,sig2betasample = sig2betasample,
+                  sig2thesample = sig2thesample,rhosample = rhosample,asample = asample,
+                  bsample = bsample,msample = msample,periods = periods,scale=scale))
     }else{
-      return(list(mstar = mstar,gnstar = gnstar,HM = HM,arrho = arrho,ara = ara,arb = arb,lpml = lpml,sig2epssample = sig2epssample,sig2alphasample = sig2alphasample,sig2betasample = sig2betasample,sig2thesample = sig2thesample,rhosample = rhosample,asample = asample,bsample = bsample,msample = msample,periods = periods))
+      return(list(mstar = mstar,gnstar = gnstar,HM = HM,arrho = arrho,ara = ara,arb = arb,lpml = lpml,
+                  sig2epssample = sig2epssample,sig2alphasample = sig2alphasample,
+                  sig2betasample = sig2betasample,sig2thesample = sig2thesample,rhosample = rhosample,
+                  asample = asample,bsample = bsample,msample = msample,periods = periods,scale=scale))
     }    
   }else{
     if((level+trend) == 0){
-      return(list(mstar = mstar,gnstar = gnstar,HM = HM,arrho = arrho,ara = ara,arb = arb,sig2epssample = sig2epssample,sig2alphasample = sig2alphasample,sig2thesample = sig2thesample,rhosample = rhosample,asample = asample,bsample = bsample,msample = msample,periods = periods))  
+      return(list(mstar = mstar,gnstar = gnstar,HM = HM,arrho = arrho,ara = ara,arb = arb,
+                  sig2epssample = sig2epssample,sig2alphasample = sig2alphasample,
+                  sig2thesample = sig2thesample,rhosample = rhosample,asample = asample,
+                  bsample = bsample,msample = msample,periods = periods,scale=scale))  
     }else if((level+trend) == 2){
-      return(list(mstar = mstar,gnstar = gnstar,HM = HM,arrho = arrho,ara = ara,arb = arb,sig2epssample = sig2epssample,sig2betasample = sig2betasample,sig2thesample = sig2thesample,rhosample = rhosample,asample = asample,bsample = bsample,msample = msample,periods = periods))
+      return(list(mstar = mstar,gnstar = gnstar,HM = HM,arrho = arrho,ara = ara,arb = arb,
+                  sig2epssample = sig2epssample,sig2betasample = sig2betasample,
+                  sig2thesample = sig2thesample,rhosample = rhosample,asample = asample,
+                  bsample = bsample,msample = msample,periods = periods,scale=scale))
     }else{
-      return(list(mstar = mstar,gnstar = gnstar,HM = HM,arrho = arrho,ara = ara,arb = arb,sig2epssample = sig2epssample,sig2alphasample = sig2alphasample,sig2betasample = sig2betasample,sig2thesample = sig2thesample,rhosample = rhosample,asample = asample,bsample = bsample,msample = msample,periods = periods))
+      return(list(mstar = mstar,gnstar = gnstar,HM = HM,arrho = arrho,ara = ara,arb = arb,
+                  sig2epssample = sig2epssample,sig2alphasample = sig2alphasample,
+                  sig2betasample = sig2betasample,sig2thesample = sig2thesample,rhosample = rhosample,
+                  asample = asample,bsample = bsample,msample = msample,periods = periods,scale=scale))
     }   
   }
   
